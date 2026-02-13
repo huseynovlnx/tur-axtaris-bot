@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tur Axtarış Sistemi</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f5f5f5; }
+        .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .age-box { display: flex; gap: 5px; margin-top: 5px; }
+        button { width: 100%; background-color: #2b95d6; color: white; padding: 15px; border: none; margin-top: 20px; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        button:hover { background-color: #1e7bb5; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3 style="text-align:center; margin-top:0;">Tur Axtarışı</h3>
+
+    <label>Şəhər / Region</label>
+    <select id="region">
+        <option value="Antalya">Antalya</option>
+        <option value="Istanbul">İstanbul</option>
+        <option value="Bodrum">Bodrum</option>
+        <option value="Sharm">Şarm Əl Şeyx</option>
+    </select>
+
+    <label>Gediş Tarixi</label>
+    <input type="date" id="date">
+
+    <label>Gecə Sayı</label>
+    <input type="number" id="nights" value="6" min="1">
+
+    <label>Böyük Sayı</label>
+    <input type="number" id="adults" value="2" min="1">
+
+    <label>Uşaq Sayı</label>
+    <select id="children" onchange="updateChildAges()">
+        <option value="0">Uşaq yoxdur</option>
+        <option value="1">1 Uşaq</option>
+        <option value="2">2 Uşaq</option>
+        <option value="3">3 Uşaq</option>
+    </select>
+
+    <div id="ages-container"></div>
+
+    <button onclick="sendData()">AXTARIŞ ET</button>
+</div>
+
+<script>
+    let tg = window.Telegram.WebApp;
+    tg.expand(); // Ekranı tam boyda açır
+
+    // Bu funksiya uşaq sayı seçiləndə işə düşür
+    function updateChildAges() {
+        let count = document.getElementById("children").value;
+        let container = document.getElementById("ages-container");
+        container.innerHTML = ""; // Köhnələri təmizlə
+
+        if (count > 0) {
+            let label = document.createElement("label");
+            label.innerText = "Uşaqların Yaşları (Qeyd edilməyənlər 0)";
+            container.appendChild(label);
+            
+            let flexBox = document.createElement("div");
+            flexBox.className = "age-box";
+
+            for (let i = 0; i < count; i++) {
+                let input = document.createElement("input");
+                input.type = "number";
+                input.placeholder = "Yaş";
+                input.value = "0"; // Sizin istədiyiniz: Default 0
+                input.min = "0";
+                input.max = "17";
+                input.className = "child-age-input";
+                flexBox.appendChild(input);
+            }
+            container.appendChild(flexBox);
+        }
+    }
+
+    // Məlumatı Bota göndərən funksiya
+    function sendData() {
+        let region = document.getElementById("region").value;
+        let date = document.getElementById("date").value;
+        let nights = document.getElementById("nights").value;
+        let adults = document.getElementById("adults").value;
+        let children = document.getElementById("children").value;
+        
+        // Yaşları toplayırıq
+        let ages = [];
+        let ageInputs = document.querySelectorAll(".child-age-input");
+        ageInputs.forEach(input => {
+            ages.push(input.value || "0"); // Boşdursa yenə 0 götür
+        });
+
+        if(!date) {
+            tg.showAlert("Zəhmət olmasa tarix seçin!");
+            return;
+        }
+
+        let data = {
+            region: region,
+            date: date,
+            nights: nights,
+            adults: adults,
+            children: children,
+            ages: ages
+        };
+
+        // Məlumatı Python-a (Telegrama) geri göndər
+        tg.sendData(JSON.stringify(data)); 
+        tg.close();
+    }
+</script>
+
+</body>
+</html>
