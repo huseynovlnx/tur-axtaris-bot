@@ -57,7 +57,6 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-        // Tarix xanasına bugünkü tarixi qoyuruq
         document.getElementById('date').valueAsDate = new Date();
 
         function sendData() {
@@ -80,7 +79,6 @@
                 date: date,
                 nights: nights,
                 adults: adults
-                // Uşaq (children) parametri silindi
             };
             tg.sendData(JSON.stringify(data));
         }
