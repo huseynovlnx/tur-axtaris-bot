@@ -3,123 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tur Axtarış Sistemi</title>
+    <title>Tur Axtarışı</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; padding: 20px; background-color: #f5f5f5; }
-        .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; }
-        input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        .age-box { display: flex; gap: 5px; margin-top: 5px; }
-        button { width: 100%; background-color: #2b95d6; color: white; padding: 15px; border: none; margin-top: 20px; border-radius: 8px; font-size: 16px; cursor: pointer; }
-        button:hover { background-color: #1e7bb5; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #000); }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; background-color: var(--tg-theme-secondary-bg-color, #f0f0f0); color: var(--tg-theme-text-color, #000); }
+        button { width: 100%; padding: 15px; margin-top: 25px; background-color: var(--tg-theme-button-color, #2481cc); color: var(--tg-theme-button-text-color, #fff); border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h3 style="text-align:center; margin-top:0;">Tur Axtarışı (Test)</h3>
+    <h3>✈️ Tur Axtarışı</h3>
 
-    <label>Şəhər / Region</label>
+    <label>Hara getmək istəyirsiniz?</label>
     <select id="region">
         <option value="Antalya">Antalya</option>
         <option value="Istanbul">İstanbul</option>
-        <option value="Bodrum">Bodrum</option>
-        <option value="Sharm">Şarm Əl Şeyx</option>
+        <option value="Dubay">Dubay</option>
+        <option value="Misir">Misir</option>
     </select>
 
-    <label>Gediş Tarixi</label>
+    <label>Otel Kateqoriyası:</label>
+    <select id="stars">
+        <option value="all">Hamısı</option>
+        <option value="3*">3 Ulduz (3*)</option>
+        <option value="4*">4 Ulduz (4*)</option>
+        <option value="5*">5 Ulduz (5*)</option>
+    </select>
+
+    <label>Gediş Tarixi:</label>
     <input type="date" id="date">
 
-    <label>Gecə Sayı</label>
+    <label>Gecə sayı:</label>
     <input type="number" id="nights" value="6" min="1">
 
-    <label>Böyük Sayı</label>
+    <label>Böyük sayı:</label>
     <input type="number" id="adults" value="2" min="1">
 
-    <label>Uşaq Sayı</label>
-    <select id="children" onchange="updateChildAges()">
-        <option value="0">Uşaq yoxdur</option>
-        <option value="1">1 Uşaq</option>
-        <option value="2">2 Uşaq</option>
-        <option value="3">3 Uşaq</option>
-    </select>
+    <label>Uşaq sayı:</label>
+    <input type="number" id="children" value="0" min="0" onchange="toggleAgeInputs()">
 
-    <div id="ages-container"></div>
+    <div id="children_ages" style="display:none;"></div>
 
-    <button type="button" onclick="sendData()">AXTARIŞ ET 🚀</button>
-</div>
+    <button onclick="sendData()">🔍 Axtar</button>
 
-<script>
-    // Telegram WebApp obyekti
-    let tg = window.Telegram.WebApp;
-    tg.expand(); 
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
 
-    function updateChildAges() {
-        let count = document.getElementById("children").value;
-        let container = document.getElementById("ages-container");
-        container.innerHTML = ""; 
+        // Tarix hissəsinə bu günün tarixini qoyaq
+        document.getElementById('date').valueAsDate = new Date();
 
-        if (count > 0) {
-            let label = document.createElement("label");
-            label.innerText = "Uşaqların Yaşları";
-            container.appendChild(label);
+        function toggleAgeInputs() {
+            let count = document.getElementById('children').value;
+            let container = document.getElementById('children_ages');
+            container.innerHTML = "";
             
-            let flexBox = document.createElement("div");
-            flexBox.className = "age-box";
-
-            for (let i = 0; i < count; i++) {
-                let input = document.createElement("input");
-                input.type = "number";
-                input.value = "0"; 
-                input.className = "child-age-input";
-                flexBox.appendChild(input);
+            if (count > 0) {
+                container.style.display = "block";
+                for (let i = 0; i < count; i++) {
+                    let label = document.createElement("label");
+                    label.innerText = (i + 1) + ". Uşağın yaşı:";
+                    let input = document.createElement("input");
+                    input.type = "number";
+                    input.className = "child-age";
+                    input.value = "6";
+                    container.appendChild(label);
+                    container.appendChild(input);
+                }
+            } else {
+                container.style.display = "none";
             }
-            container.appendChild(flexBox);
-        }
-    }
-
-    function sendData() {
-        // 1. Məlumatları yığırıq
-        let region = document.getElementById("region").value;
-        let date = document.getElementById("date").value;
-        let nights = document.getElementById("nights").value;
-        let adults = document.getElementById("adults").value;
-        let children = document.getElementById("children").value;
-        
-        let ages = [];
-        document.querySelectorAll(".child-age-input").forEach(input => {
-            ages.push(input.value || "0");
-        });
-
-        // 2. Yoxlama edirik
-        if(!date) {
-            tg.showAlert("Zəhmət olmasa tarix seçin!"); // Telegram xəbərdarlığı
-            return;
         }
 
-        let data = {
-            region: region,
-            date: date,
-            nights: nights,
-            adults: adults,
-            children: children,
-            ages: ages
-        };
+        function sendData() {
+            let region = document.getElementById('region').value;
+            let stars = document.getElementById('stars').value;
+            let date = document.getElementById('date').value;
+            let nights = document.getElementById('nights').value;
+            let adults = document.getElementById('adults').value;
+            let children = document.getElementById('children').value;
+            
+            let ages = [];
+            let ageInputs = document.getElementsByClassName('child-age');
+            for (let input of ageInputs) {
+                ages.push(input.value);
+            }
 
-        // 3. Debug üçün ekrana yazı çıxarırıq (Vacib hissə)
-        // Bu yazı çıxsa, deməli kod işləyir
-        tg.showAlert("Məlumat göndərilir...\n" + JSON.stringify(data));
+            if (!date) {
+                alert("Zəhmət olmasa tarix seçin!");
+                return;
+            }
 
-        // 4. Məlumatı göndər
-        tg.sendData(JSON.stringify(data));
-        
-        // 5. Pəncərəni bağla (bəzən sendData özü bağlayır, amma sığortalayaq)
-        setTimeout(() => {
-            tg.close();
-        }, 500);
-    }
-</script>
+            let data = {
+                region: region,
+                stars: stars,
+                date: date,
+                nights: nights,
+                adults: adults,
+                children: children,
+                ages: ages
+            };
 
+            tg.sendData(JSON.stringify(data));
+        }
+    </script>
 </body>
 </html>
