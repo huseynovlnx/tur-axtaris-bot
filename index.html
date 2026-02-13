@@ -8,8 +8,8 @@
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #000); }
         label { display: block; margin-top: 15px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; background-color: var(--tg-theme-secondary-bg-color, #f0f0f0); color: var(--tg-theme-text-color, #000); }
-        button { width: 100%; padding: 15px; margin-top: 25px; background-color: var(--tg-theme-button-color, #2481cc); color: var(--tg-theme-button-text-color, #fff); border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        input, select { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; background-color: var(--tg-theme-secondary-bg-color, #f0f0f0); color: var(--tg-theme-text-color, #000); }
+        button { width: 100%; padding: 15px; margin-top: 25px; background-color: var(--tg-theme-button-color, #2481cc); color: var(--tg-theme-button-text-color, #fff); border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -19,6 +19,9 @@
     <label>Hara getmək istəyirsiniz?</label>
     <select id="region">
         <option value="Antalya">Antalya</option>
+        <option value="Alanya">Alanya</option>
+        <option value="Belek">Belek</option>
+        <option value="Kemer">Kemer</option>
         <option value="Istanbul">İstanbul</option>
         <option value="Dubay">Dubay</option>
         <option value="Misir">Misir</option>
@@ -41,41 +44,12 @@
     <label>Böyük sayı:</label>
     <input type="number" id="adults" value="2" min="1">
 
-    <label>Uşaq sayı:</label>
-    <input type="number" id="children" value="0" min="0" onchange="toggleAgeInputs()">
-
-    <div id="children_ages" style="display:none;"></div>
-
-    <button onclick="sendData()">🔍 Axtar</button>
+    <button onclick="sendData()">🔍 Axtarışı Başlat</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-
-        // Tarix hissəsinə bu günün tarixini qoyaq
         document.getElementById('date').valueAsDate = new Date();
-
-        function toggleAgeInputs() {
-            let count = document.getElementById('children').value;
-            let container = document.getElementById('children_ages');
-            container.innerHTML = "";
-            
-            if (count > 0) {
-                container.style.display = "block";
-                for (let i = 0; i < count; i++) {
-                    let label = document.createElement("label");
-                    label.innerText = (i + 1) + ". Uşağın yaşı:";
-                    let input = document.createElement("input");
-                    input.type = "number";
-                    input.className = "child-age";
-                    input.value = "6";
-                    container.appendChild(label);
-                    container.appendChild(input);
-                }
-            } else {
-                container.style.display = "none";
-            }
-        }
 
         function sendData() {
             let region = document.getElementById('region').value;
@@ -83,16 +57,9 @@
             let date = document.getElementById('date').value;
             let nights = document.getElementById('nights').value;
             let adults = document.getElementById('adults').value;
-            let children = document.getElementById('children').value;
-            
-            let ages = [];
-            let ageInputs = document.getElementsByClassName('child-age');
-            for (let input of ageInputs) {
-                ages.push(input.value);
-            }
 
             if (!date) {
-                alert("Zəhmət olmasa tarix seçin!");
+                tg.showAlert("Zəhmət olmasa tarix seçin!");
                 return;
             }
 
@@ -101,9 +68,7 @@
                 stars: stars,
                 date: date,
                 nights: nights,
-                adults: adults,
-                children: children,
-                ages: ages
+                adults: adults
             };
 
             tg.sendData(JSON.stringify(data));
