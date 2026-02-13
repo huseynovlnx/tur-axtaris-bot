@@ -19,9 +19,6 @@
     <label>Hara getmək istəyirsiniz?</label>
     <select id="region">
         <option value="Antalya">Antalya</option>
-        <option value="Alanya">Alanya</option>
-        <option value="Belek">Belek</option>
-        <option value="Kemer">Kemer</option>
         <option value="Istanbul">İstanbul</option>
         <option value="Dubay">Dubay</option>
         <option value="Misir">Misir</option>
@@ -44,11 +41,13 @@
     <label>Böyük sayı:</label>
     <input type="number" id="adults" value="2" min="1">
 
-    <button onclick="sendData()">🔍 Axtarışı Başlat</button>
+    <button onclick="sendData()">🔍 Axtar</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+
+        // Tarixi bu günə quraq
         document.getElementById('date').valueAsDate = new Date();
 
         function sendData() {
@@ -57,12 +56,13 @@
             let date = document.getElementById('date').value;
             let nights = document.getElementById('nights').value;
             let adults = document.getElementById('adults').value;
-
+            
             if (!date) {
                 tg.showAlert("Zəhmət olmasa tarix seçin!");
                 return;
             }
 
+            // Uşaq parametrləri silindi
             let data = {
                 region: region,
                 stars: stars,
