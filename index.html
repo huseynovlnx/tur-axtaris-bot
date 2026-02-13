@@ -18,7 +18,7 @@
 <body>
 
 <div class="container">
-    <h3 style="text-align:center; margin-top:0;">Tur Axtarışı</h3>
+    <h3 style="text-align:center; margin-top:0;">Tur Axtarışı (Test)</h3>
 
     <label>Şəhər / Region</label>
     <select id="region">
@@ -47,22 +47,22 @@
 
     <div id="ages-container"></div>
 
-    <button onclick="sendData()">AXTARIŞ ET</button>
+    <button type="button" onclick="sendData()">AXTARIŞ ET 🚀</button>
 </div>
 
 <script>
+    // Telegram WebApp obyekti
     let tg = window.Telegram.WebApp;
-    tg.expand(); // Ekranı tam boyda açır
+    tg.expand(); 
 
-    // Bu funksiya uşaq sayı seçiləndə işə düşür
     function updateChildAges() {
         let count = document.getElementById("children").value;
         let container = document.getElementById("ages-container");
-        container.innerHTML = ""; // Köhnələri təmizlə
+        container.innerHTML = ""; 
 
         if (count > 0) {
             let label = document.createElement("label");
-            label.innerText = "Uşaqların Yaşları (Qeyd edilməyənlər 0)";
+            label.innerText = "Uşaqların Yaşları";
             container.appendChild(label);
             
             let flexBox = document.createElement("div");
@@ -71,10 +71,7 @@
             for (let i = 0; i < count; i++) {
                 let input = document.createElement("input");
                 input.type = "number";
-                input.placeholder = "Yaş";
-                input.value = "0"; // Sizin istədiyiniz: Default 0
-                input.min = "0";
-                input.max = "17";
+                input.value = "0"; 
                 input.className = "child-age-input";
                 flexBox.appendChild(input);
             }
@@ -82,23 +79,22 @@
         }
     }
 
-    // Məlumatı Bota göndərən funksiya
     function sendData() {
+        // 1. Məlumatları yığırıq
         let region = document.getElementById("region").value;
         let date = document.getElementById("date").value;
         let nights = document.getElementById("nights").value;
         let adults = document.getElementById("adults").value;
         let children = document.getElementById("children").value;
         
-        // Yaşları toplayırıq
         let ages = [];
-        let ageInputs = document.querySelectorAll(".child-age-input");
-        ageInputs.forEach(input => {
-            ages.push(input.value || "0"); // Boşdursa yenə 0 götür
+        document.querySelectorAll(".child-age-input").forEach(input => {
+            ages.push(input.value || "0");
         });
 
+        // 2. Yoxlama edirik
         if(!date) {
-            tg.showAlert("Zəhmət olmasa tarix seçin!");
+            tg.showAlert("Zəhmət olmasa tarix seçin!"); // Telegram xəbərdarlığı
             return;
         }
 
@@ -111,9 +107,17 @@
             ages: ages
         };
 
-        // Məlumatı Python-a (Telegrama) geri göndər
-        tg.sendData(JSON.stringify(data)); 
-        tg.close();
+        // 3. Debug üçün ekrana yazı çıxarırıq (Vacib hissə)
+        // Bu yazı çıxsa, deməli kod işləyir
+        tg.showAlert("Məlumat göndərilir...\n" + JSON.stringify(data));
+
+        // 4. Məlumatı göndər
+        tg.sendData(JSON.stringify(data));
+        
+        // 5. Pəncərəni bağla (bəzən sendData özü bağlayır, amma sığortalayaq)
+        setTimeout(() => {
+            tg.close();
+        }, 500);
     }
 </script>
 
