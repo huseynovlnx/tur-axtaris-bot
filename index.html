@@ -13,12 +13,12 @@
     </style>
 </head>
 <body>
-
     <h3>✈️ Tur Axtarışı</h3>
 
-    <label>Hara getmək istəyirsiniz?</label>
+    <label>İstiqamət:</label>
     <select id="region">
         <option value="Antalya">Antalya</option>
+        <option value="Alanya">Alanya</option>
         <option value="Istanbul">İstanbul</option>
         <option value="Dubay">Dubay</option>
         <option value="Misir">Misir</option>
@@ -46,8 +46,6 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-
-        // Tarixi bu günə quraq
         document.getElementById('date').valueAsDate = new Date();
 
         function sendData() {
@@ -56,13 +54,12 @@
             let date = document.getElementById('date').value;
             let nights = document.getElementById('nights').value;
             let adults = document.getElementById('adults').value;
-            
+
             if (!date) {
-                tg.showAlert("Zəhmət olmasa tarix seçin!");
+                tg.showAlert("Tarix seçilməyib!");
                 return;
             }
 
-            // Uşaq parametrləri silindi
             let data = {
                 region: region,
                 stars: stars,
@@ -70,7 +67,6 @@
                 nights: nights,
                 adults: adults
             };
-
             tg.sendData(JSON.stringify(data));
         }
     </script>
