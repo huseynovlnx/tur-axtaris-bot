@@ -6,22 +6,22 @@
     <title>Tur Axtarışı</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #000); }
+        body { font-family: sans-serif; padding: 20px; background-color: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #000); }
         label { display: block; margin-top: 15px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; background-color: var(--tg-theme-secondary-bg-color, #f0f0f0); color: var(--tg-theme-text-color, #000); }
-        button { width: 100%; padding: 15px; margin-top: 25px; background-color: var(--tg-theme-button-color, #2481cc); color: var(--tg-theme-button-text-color, #fff); border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; margin-top: 25px; background-color: #2481cc; color: #fff; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
     </style>
 </head>
 <body>
-
     <h3>✈️ Tur Axtarışı</h3>
 
-    <label>Hara getmək istəyirsiniz?</label>
+    <label>İstiqamət:</label>
     <select id="region">
+        <option value="Alanya">Alanya</option>
         <option value="Antalya">Antalya</option>
+        <option value="Belek">Belek</option>
         <option value="Istanbul">İstanbul</option>
-        <option value="Dubay">Dubay</option>
-        <option value="Misir">Misir</option>
+        <option value="Kemer">Kemer</option>
     </select>
 
     <label>Otel Kateqoriyası:</label>
@@ -32,80 +32,60 @@
         <option value="5*">5 Ulduz (5*)</option>
     </select>
 
+    <label>Qidalanma:</label>
+    <select id="meal">
+        <option value="">Hamısı (Default)</option>
+        <option value="AI">AI (Hər şey daxil)</option>
+        <option value="BB">BB (Səhər yeməyi)</option>
+        <option value="FB">FB (3 dəfə yemək)</option>
+        <option value="HB">HB (Səhər və Axşam)</option>
+        <option value="RO">Room Only (Yeməksiz)</option>
+        <option value="UAI">UAI (Ultra Hər şey daxil)</option>
+    </select>
+
     <label>Gediş Tarixi:</label>
     <input type="date" id="date">
 
     <label>Gecə sayı:</label>
-    <input type="number" id="nights" value="6" min="1">
+    <input type="number" id="nights" value="6">
 
     <label>Böyük sayı:</label>
-    <input type="number" id="adults" value="2" min="1">
+    <input type="number" id="adults" value="2">
 
     <label>Uşaq sayı:</label>
-    <input type="number" id="children" value="0" min="0" onchange="toggleAgeInputs()">
-
-    <div id="children_ages" style="display:none;"></div>
+    <input type="number" id="children" value="0" onchange="toggleAges()">
+    <div id="ages_container"></div>
 
     <button onclick="sendData()">🔍 Axtar</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-
-        // Tarix hissəsinə bu günün tarixini qoyaq
         document.getElementById('date').valueAsDate = new Date();
 
-        function toggleAgeInputs() {
+        function toggleAges() {
             let count = document.getElementById('children').value;
-            let container = document.getElementById('children_ages');
+            let container = document.getElementById('ages_container');
             container.innerHTML = "";
-            
-            if (count > 0) {
-                container.style.display = "block";
-                for (let i = 0; i < count; i++) {
-                    let label = document.createElement("label");
-                    label.innerText = (i + 1) + ". Uşağın yaşı:";
-                    let input = document.createElement("input");
-                    input.type = "number";
-                    input.className = "child-age";
-                    input.value = "6";
-                    container.appendChild(label);
-                    container.appendChild(input);
-                }
-            } else {
-                container.style.display = "none";
+            for (let i = 0; i < count; i++) {
+                container.innerHTML += `<label>${i+1}. Uşaq yaşı:</label><input type="number" class="child-age" value="6">`;
             }
         }
 
         function sendData() {
-            let region = document.getElementById('region').value;
-            let stars = document.getElementById('stars').value;
-            let date = document.getElementById('date').value;
-            let nights = document.getElementById('nights').value;
-            let adults = document.getElementById('adults').value;
-            let children = document.getElementById('children').value;
-            
             let ages = [];
-            let ageInputs = document.getElementsByClassName('child-age');
-            for (let input of ageInputs) {
-                ages.push(input.value);
-            }
-
-            if (!date) {
-                alert("Zəhmət olmasa tarix seçin!");
-                return;
-            }
-
+            document.querySelectorAll('.child-age').forEach(el => ages.push(el.value));
+            
             let data = {
-                region: region,
-                stars: stars,
-                date: date,
-                nights: nights,
-                adults: adults,
-                children: children,
+                region: document.getElementById('region').value,
+                stars: document.getElementById('stars').value,
+                meal: document.getElementById('meal').value,
+                date: document.getElementById('date').value,
+                nights: document.getElementById('nights').value,
+                adults: document.getElementById('adults').value,
+                children: document.getElementById('children').value,
                 ages: ages
             };
-
             tg.sendData(JSON.stringify(data));
         }
     </script>
