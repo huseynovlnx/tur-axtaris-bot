@@ -5,82 +5,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tur Axtarışı</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            margin: 0;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border-radius: 14px;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            background: var(--tg-theme-secondary-bg-color, #f2f2f2);
+            color: var(--tg-theme-text-color, #000);
+            box-sizing: border-box;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            box-shadow: 0 0 0 2px var(--tg-theme-button-color, #2481cc);
+        }
+
+        .children-container {
+            margin-top: 10px;
+            transition: 0.3s ease;
+        }
+
+        .child-age {
+            margin-top: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            margin-top: 28px;
+            border-radius: 18px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            transition: 0.2s ease;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 25px;
+            opacity: 0.6;
+        }
+    </style>
 </head>
+
 <body>
+<div class="container">
 
-<h3>✈️ Tur Axtarışı</h3>
+    <h2>✈️ Tur Axtarışı</h2>
 
-<label>Region:</label>
-<select id="region">
-    <option value="Antalya">Antalya</option>
-    <option value="Istanbul">Istanbul</option>
-    <option value="Dubay">Dubay</option>
-    <option value="Misir">Misir</option>
-</select>
+    <label>Hara getmək istəyirsiniz?</label>
+    <select id="region">
+        <option value="Antalya">Antalya</option>
+        <option value="Istanbul">İstanbul</option>
+        <option value="Dubay">Dubay</option>
+        <option value="Misir">Misir</option>
+    </select>
 
-<label>Otel Ulduzu:</label>
-<select id="stars">
-    <option value="all">Hamısı</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-</select>
+    <label>Otel kateqoriyası</label>
+    <select id="stars">
+        <option value="all">Hamısı</option>
+        <option value="3">3 Ulduz</option>
+        <option value="4">4 Ulduz</option>
+        <option value="5">5 Ulduz</option>
+    </select>
 
-<label>Tarix:</label>
-<input type="date" id="date">
+    <label>Gediş tarixi</label>
+    <input type="date" id="date">
 
-<label>Gecə sayı:</label>
-<input type="number" id="nights" value="6" min="1">
+    <label>Gecə sayı</label>
+    <input type="number" id="nights" value="6" min="1">
 
-<label>Böyük sayı:</label>
-<input type="number" id="adults" value="2" min="1">
+    <label>Böyük sayı</label>
+    <input type="number" id="adults" value="2" min="1">
 
-<label>Uşaq sayı:</label>
-<input type="number" id="children" value="0" min="0" onchange="toggleAgeInputs()">
+    <label>Uşaq sayı</label>
+    <input type="number" id="children" value="0" min="0" onchange="toggleAgeInputs()">
 
-<div id="children_ages"></div>
+    <div id="children_ages" class="children-container"></div>
 
-<button onclick="sendData()">Axtar</button>
+    <button onclick="sendData()">🔍 Axtarışı Başlat</button>
+
+    <div class="footer">
+        Frans Academy • Tur sistemi
+    </div>
+
+</div>
 
 <script>
-let tg = window.Telegram.WebApp;
-tg.expand();
+    let tg = window.Telegram.WebApp;
+    tg.expand();
 
-document.getElementById('date').valueAsDate = new Date();
+    document.getElementById('date').valueAsDate = new Date();
 
-function toggleAgeInputs() {
-    let count = parseInt(document.getElementById('children').value);
-    let container = document.getElementById('children_ages');
-    container.innerHTML = "";
+    function toggleAgeInputs() {
+        let count = parseInt(document.getElementById('children').value);
+        let container = document.getElementById('children_ages');
+        container.innerHTML = "";
 
-    for (let i = 0; i < count; i++) {
-        let input = document.createElement("input");
-        input.type = "number";
-        input.placeholder = "Uşağın yaşı";
-        input.className = "child-age";
-        input.value = "6";
-        container.appendChild(input);
+        if (count > 0) {
+            for (let i = 0; i < count; i++) {
+                let input = document.createElement("input");
+                input.type = "number";
+                input.placeholder = (i + 1) + ". Uşağın yaşı";
+                input.className = "child-age";
+                input.value = "6";
+                container.appendChild(input);
+            }
+        }
     }
-}
 
-function sendData() {
-    let ages = [];
-    document.querySelectorAll(".child-age").forEach(el => {
-        ages.push(parseInt(el.value));
-    });
+    function sendData() {
+        let ages = [];
+        document.querySelectorAll(".child-age").forEach(el => {
+            ages.push(parseInt(el.value));
+        });
 
-    let data = {
-        region: document.getElementById('region').value,
-        stars: document.getElementById('stars').value,
-        date: document.getElementById('date').value,
-        nights: parseInt(document.getElementById('nights').value),
-        adults: parseInt(document.getElementById('adults').value),
-        children: parseInt(document.getElementById('children').value),
-        ages: ages
-    };
+        let data = {
+            region: document.getElementById('region').value,
+            stars: document.getElementById('stars').value,
+            date: document.getElementById('date').value,
+            nights: parseInt(document.getElementById('nights').value),
+            adults: parseInt(document.getElementById('adults').value),
+            children: parseInt(document.getElementById('children').value),
+            ages: ages
+        };
 
-    tg.sendData(JSON.stringify(data));
-}
+        if (!data.date) {
+            alert("Tarix seçin!");
+            return;
+        }
+
+        tg.sendData(JSON.stringify(data));
+    }
 </script>
 
 </body>
