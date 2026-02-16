@@ -6,24 +6,77 @@
     <title>Tur Axtarışı</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #000); }
-        label { display: block; margin-top: 15px; font-weight: bold; }
-        input, select { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; background-color: var(--tg-theme-secondary-bg-color, #f0f0f0); color: var(--tg-theme-text-color, #000); }
-        button { width: 100%; padding: 15px; margin-top: 25px; background-color: var(--tg-theme-button-color, #2481cc); color: var(--tg-theme-button-text-color, #fff); border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            padding: 20px; 
+            background-color: var(--tg-theme-bg-color, #fff); 
+            color: var(--tg-theme-text-color, #000); 
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        h3 { margin-bottom: 30px; }
+        label { 
+            display: block; 
+            margin-top: 15px; 
+            font-weight: bold; 
+            margin-bottom: 5px;
+        }
+        input, select { 
+            width: 100%; 
+            padding: 10px; 
+            margin-bottom: 10px;
+            border-radius: 8px; 
+            border: 1px solid #ccc; 
+            box-sizing: border-box; 
+            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0); 
+            color: var(--tg-theme-text-color, #000); 
+            font-size: 16px;
+        }
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            margin-top: 25px; 
+            background-color: var(--tg-theme-button-color, #2481cc); 
+            color: var(--tg-theme-button-text-color, #fff); 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .info-box {
+            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--tg-theme-hint-color, #999);
+        }
+        .section-title {
+            margin-top: 20px;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
     </style>
 </head>
 <body>
+
     <h3>✈️ Tur Axtarışı</h3>
 
-    <label>İstiqamət:</label>
+    <div class="section-title">Məkan</div>
+    <label>Hara getmək istəyirsiniz?</label>
     <select id="region">
         <option value="Antalya">Antalya</option>
-        <option value="Alanya">Alanya</option>
         <option value="Istanbul">İstanbul</option>
         <option value="Dubay">Dubay</option>
         <option value="Misir">Misir</option>
     </select>
 
+    <div class="section-title">Otel Seçimi</div>
     <label>Otel Kateqoriyası:</label>
     <select id="stars">
         <option value="all">Hamısı</option>
@@ -32,21 +85,61 @@
         <option value="5*">5 Ulduz (5*)</option>
     </select>
 
+    <div class="section-title">Tarixlər</div>
     <label>Gediş Tarixi:</label>
     <input type="date" id="date">
 
-    <label>Gecə sayı:</label>
-    <input type="number" id="nights" value="6" min="1">
+    <label>Gecə Sayı:</label>
+    <input type="number" id="nights" value="6" min="1" max="30">
 
-    <label>Böyük sayı:</label>
-    <input type="number" id="adults" value="2" min="1">
+    <div class="section-title">Əşxaslar</div>
+    <label>Böyük Sayı:</label>
+    <input type="number" id="adults" value="2" min="1" max="6">
+
+    <label>Uşaq Sayı:</label>
+    <input type="number" id="children" value="0" min="0" max="4" onchange="toggleAgeInputs()">
+
+    <div id="children_ages" style="display:none;"></div>
+
+    <div class="info-box">
+        💡 Fiyatlar USD cinsindəndir. Ən ucuz variantlar göstərilir.
+    </div>
 
     <button onclick="sendData()">🔍 Axtar</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-        document.getElementById('date').valueAsDate = new Date();
+        tg.MainButton.hide();
+
+        // Tarix hissəsinə bu günün tarixini qoy
+        const today = new Date();
+        document.getElementById('date').valueAsDate = today;
+
+        function toggleAgeInputs() {
+            let count = parseInt(document.getElementById('children').value) || 0;
+            let container = document.getElementById('children_ages');
+            container.innerHTML = "";
+            
+            if (count > 0) {
+                container.style.display = "block";
+                for (let i = 0; i < count; i++) {
+                    let label = document.createElement("label");
+                    label.innerText = (i + 1) + ". Uşağın yaşı:";
+                    let input = document.createElement("input");
+                    input.type = "number";
+                    input.className = "child-age";
+                    input.id = "child_age_" + i;
+                    input.value = "6";
+                    input.min = "0";
+                    input.max = "17";
+                    container.appendChild(label);
+                    container.appendChild(input);
+                }
+            } else {
+                container.style.display = "none";
+            }
+        }
 
         function sendData() {
             let region = document.getElementById('region').value;
@@ -54,9 +147,26 @@
             let date = document.getElementById('date').value;
             let nights = document.getElementById('nights').value;
             let adults = document.getElementById('adults').value;
+            let children = document.getElementById('children').value;
+            
+            // DÜZƏLIŞI: Bütün yaş dəyərlərini birbaşa oxu
+            let ages = [];
+            let ageInputs = document.getElementsByClassName('child-age');
+            for (let input of ageInputs) {
+                let age = input.value.trim();
+                if (age === '' || age === undefined) {
+                    age = '6'; // Default dəyər
+                }
+                ages.push(age);
+            }
 
             if (!date) {
-                tg.showAlert("Tarix seçilməyib!");
+                alert("Zəhmət olmasa tarix seçin!");
+                return;
+            }
+
+            if (children > 0 && ages.length !== parseInt(children)) {
+                alert("Zəhmət olmasa bütün uşaqların yaşını daxil edin!");
                 return;
             }
 
@@ -65,10 +175,23 @@
                 stars: stars,
                 date: date,
                 nights: nights,
-                adults: adults
+                adults: adults,
+                children: children,
+                ages: ages
             };
+
+            console.log("Göndərilən məlumat:", data);
             tg.sendData(JSON.stringify(data));
         }
+
+        // Form validasiyası
+        document.getElementById('children').addEventListener('change', function() {
+            if (this.value > 4) {
+                alert("Maksimum 4 uşaq qeyd etmək olar.");
+                this.value = 4;
+                toggleAgeInputs();
+            }
+        });
     </script>
 </body>
 </html>
