@@ -3,459 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kompas Tour - Tur Axtarışı</title>
+    <title>Tur Axtarışı</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            padding: 24px;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .header h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-        
-        .header p {
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .section {
-            margin-bottom: 24px;
-        }
-        
-        .section-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #667eea;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333;
-            font-size: 14px;
-        }
-        
-        input[type="date"],
-        input[type="number"],
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            background-color: #fafafa;
-            color: #333;
-            transition: border-color 0.3s;
-        }
-        
-        input[type="date"]:focus,
-        input[type="number"]:focus,
-        input[type="text"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            background-color: white;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        
-        .form-row input,
-        .form-row select {
-            margin-bottom: 0;
-        }
-        
-        .children-ages {
-            background: #f9f9f9;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 12px;
-        }
-        
-        .children-ages label {
-            font-size: 13px;
-            margin-bottom: 6px;
-        }
-        
-        .children-ages select {
-            margin-bottom: 8px;
-        }
-        
-        button[type="submit"] {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 20px;
-        }
-        
-        button[type="submit"]:active {
-            transform: scale(0.98);
-        }
-        
-        button[type="submit"]:hover {
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
-        }
-        
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #667eea;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            color: #1565c0;
-        }
-        
-        .error-message {
-            color: #d32f2f;
-            font-size: 13px;
-            margin-top: 8px;
-            display: none;
-        }
+        body { font-family: sans-serif; padding: 20px; background-color: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #000); }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input, select { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; font-size: 14px; }
+        button { width: 100%; padding: 15px; margin-top: 25px; background-color: #2481cc; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
+    <h3>✈️ Tur Axtarışı</h3>
 
-<div class="container">
-    <div class="header">
-        <h1>✈️ Tur Axtarışı</h1>
-        <p>Kompas Tour-da ən ucuz turları bulun</p>
-    </div>
+    <label>İstiqamət:</label>
+    <select id="region">
+        <option value="Alanya">Alanya</option>
+        <option value="Antalya">Antalya</option>
+        <option value="Belek">Belek</option>
+        <option value="Istanbul">İstanbul</option>
+        <option value="Kemer">Kemer</option>
+    </select>
 
-    <div class="info-box">
-        💡 Formu doldurdukdan sonra nəticələr 30-45 saniyə içində gösterilir.
-    </div>
+    <label>Otel Kateqoriyası:</label>
+    <select id="stars">
+        <option value="all">Hamısı</option>
+        <option value="3*">3 Ulduz (3*)</option>
+        <option value="4*">4 Ulduz (4*)</option>
+        <option value="5*">5 Ulduz (5*)</option>
+    </select>
 
-    <form id="searchForm">
-        <!-- TARİXLƏR -->
-        <div class="section">
-            <div class="section-title">📅 Tarixlər</div>
-            
-            <label>Gediş Tarixi *</label>
-            <input type="date" id="checkinBeg" required>
-            
-            <label>Çıkış Tarixi *</label>
-            <input type="date" id="checkinEnd" required>
-        </div>
+    <label>Qidalanma:</label>
+    <select id="meal">
+        <option value="">Hamısı (Default)</option>
+        <option value="AI">AI (Hər şey daxil)</option>
+        <option value="BB">BB (Səhər yeməyi)</option>
+        <option value="FB">FB (3 dəfə yemək)</option>
+        <option value="HB">HB (Səhər və Axşam)</option>
+        <option value="RO">Room Only (Yeməksiz)</option>
+        <option value="UAI">UAI (Ultra Hər şey daxil)</option>
+    </select>
 
-        <!-- GƏÇ MÜDDƏTI -->
-        <div class="section">
-            <div class="section-title">🛏️ Gecə Müddəti</div>
-            
-            <div class="form-row">
-                <div>
-                    <label>Minimum Gecə *</label>
-                    <select id="nightsFrom" required>
-                        <option value="">Seçin</option>
-                        <option value="1">1 gecə</option>
-                        <option value="2">2 gecə</option>
-                        <option value="3">3 gecə</option>
-                        <option value="4">4 gecə</option>
-                        <option value="5">5 gecə</option>
-                        <option value="6">6 gecə</option>
-                        <option value="7" selected>7 gecə</option>
-                        <option value="8">8 gecə</option>
-                        <option value="9">9 gecə</option>
-                        <option value="10">10 gecə</option>
-                        <option value="11">11 gecə</option>
-                        <option value="12">12 gecə</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label>Maksimum Gecə *</label>
-                    <select id="nightsTill" required>
-                        <option value="">Seçin</option>
-                        <option value="1">1 gecə</option>
-                        <option value="2">2 gecə</option>
-                        <option value="3">3 gecə</option>
-                        <option value="4">4 gecə</option>
-                        <option value="5">5 gecə</option>
-                        <option value="6">6 gecə</option>
-                        <option value="7" selected>7 gecə</option>
-                        <option value="8">8 gecə</option>
-                        <option value="9">9 gecə</option>
-                        <option value="10">10 gecə</option>
-                        <option value="11">11 gecə</option>
-                        <option value="12">12 gecə</option>
-                    </select>
-                </div>
-            </div>
-        </div>
+    <label>Gediş Tarixi:</label>
+    <input type="date" id="date">
 
-        <!-- İNSANLAR -->
-        <div class="section">
-            <div class="section-title">👥 İnsanlar</div>
-            
-            <div class="form-row">
-                <div>
-                    <label>Böyük Sayı *</label>
-                    <select id="adult" required>
-                        <option value="">Seçin</option>
-                        <option value="1">1 böyük</option>
-                        <option value="2" selected>2 böyük</option>
-                        <option value="3">3 böyük</option>
-                        <option value="4">4 böyük</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label>Uşaq Sayı</label>
-                    <select id="child" onchange="toggleChildrenAges()">
-                        <option value="0" selected>0 uşaq</option>
-                        <option value="1">1 uşaq</option>
-                        <option value="2">2 uşaq</option>
-                        <option value="3">3 uşaq</option>
-                    </select>
-                </div>
-            </div>
-            
-            <!-- Uşaq Yaşları (Dinamik) -->
-            <div id="childrenAgesContainer" style="display: none;">
-                <div class="children-ages">
-                    <div id="agesInputs"></div>
-                </div>
-            </div>
-        </div>
+    <label>Gecə sayı:</label>
+    <input type="number" id="nights" value="6" min="1">
 
-        <!-- MƏKAN -->
-        <div class="section">
-            <div class="section-title">🌍 Məkan</div>
-            
-            <label>Hara getmək istəyirsiniz? *</label>
-            <select id="town" required>
-                <option value="">Seçin</option>
-                <option value="Antalya">Antalya</option>
-                <option value="Istanbul">Istanbul</option>
-                <option value="Bodrum">Bodrum</option>
-                <option value="Marmaris">Marmaris</option>
-                <option value="Side">Side</option>
-                <option value="Alanya">Alanya</option>
-                <option value="Belek">Belek</option>
-                <option value="Kemer">Kemer</option>
-                <option value="Dalaman">Dalaman</option>
-                <option value="Fethiye">Fethiye</option>
-                <option value="Göcek">Göcek</option>
-                <option value="Çeşme">Çeşme</option>
-                <option value="İzmir">İzmir</option>
-                <option value="Kusadasi">Kusadasi</option>
-                <option value="Didim">Didim</option>
-            </select>
-            
-            <label>Dövlət (İsteğe Bağlı)</label>
-            <select id="state">
-                <option value="">Hamısı</option>
-                <option value="Turkey" selected>Türkiye</option>
-                <option value="Egypt">Misir</option>
-                <option value="UAE">Birləşmiş Ərəb Əmirlikləri</option>
-                <option value="Greece">Yunanistan</option>
-                <option value="Cyprus">Kibris</option>
-            </select>
-        </div>
+    <label>Böyük sayı:</label>
+    <input type="number" id="adults" value="2" min="1">
 
-        <!-- QİYMƏT ARALIGI -->
-        <div class="section">
-            <div class="section-title">💵 Qiymət (İsteğe Bağlı)</div>
-            
-            <div class="form-row">
-                <div>
-                    <label>Minimum Qiymət</label>
-                    <input type="number" id="costMin" placeholder="məs: 1500" min="0">
-                </div>
-                
-                <div>
-                    <label>Maksimum Qiymət</label>
-                    <input type="number" id="costMax" placeholder="məs: 4000" min="0">
-                </div>
-            </div>
-            
-            <label>Para Vahidi</label>
-            <select id="currency">
-                <option value="EUR" selected>EUR (€)</option>
-                <option value="USD">USD ($)</option>
-            </select>
-        </div>
+    <button onclick="sendData()">🔍 Axtarışı Başlat</button>
 
-        <div class="error-message" id="errorMessage"></div>
-        
-        <button type="submit">🔍 Axtar</button>
-    </form>
-</div>
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        document.getElementById('date').valueAsDate = new Date();
 
-<script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+        function sendData() {
+            let region = document.getElementById('region').value;
+            let stars = document.getElementById('stars').value;
+            let meal = document.getElementById('meal').value;
+            let date = document.getElementById('date').value;
+            let nights = document.getElementById('nights').value;
+            let adults = document.getElementById('adults').value;
 
-    // Tarix input'larına default dəyər set et
-    const today = new Date();
-    const checkout = new Date(today);
-    checkout.setDate(checkout.getDate() + 7);
-    
-    function formatDate(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-    
-    document.getElementById('checkinBeg').value = formatDate(today);
-    document.getElementById('checkinEnd').value = formatDate(checkout);
-
-    // Uşaq yaşları input'larını dinamik yarad
-    function toggleChildrenAges() {
-        const childCount = parseInt(document.getElementById('child').value) || 0;
-        const container = document.getElementById('childrenAgesContainer');
-        const agesInputs = document.getElementById('agesInputs');
-        
-        agesInputs.innerHTML = '';
-        
-        if (childCount > 0) {
-            container.style.display = 'block';
-            
-            for (let i = 0; i < childCount; i++) {
-                const label = document.createElement('label');
-                label.textContent = `${i + 1}. Uşağın Yaşı`;
-                
-                const select = document.createElement('select');
-                select.className = 'child-age';
-                select.id = `age${i + 1}`;
-                
-                select.innerHTML = '<option value="">Seçin</option>';
-                for (let age = 0; age <= 18; age++) {
-                    const opt = document.createElement('option');
-                    opt.value = age;
-                    opt.textContent = age + ' yaş';
-                    if (age === 6) opt.selected = true;  // Default 6
-                    select.appendChild(opt);
-                }
-                
-                agesInputs.appendChild(label);
-                agesInputs.appendChild(select);
+            if (!date) {
+                alert("Zəhmət olmasa tarix seçin!");
+                return;
             }
-        } else {
-            container.style.display = 'none';
+
+            let data = {
+                region: region,
+                stars: stars,
+                meal: meal,
+                date: date,
+                nights: nights,
+                adults: adults
+            };
+            tg.sendData(JSON.stringify(data));
         }
-    }
-
-    // Form submit
-    document.getElementById('searchForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const checkinBeg = document.getElementById('checkinBeg').value;
-        const checkinEnd = document.getElementById('checkinEnd').value;
-        const nightsFrom = document.getElementById('nightsFrom').value;
-        const nightsTill = document.getElementById('nightsTill').value;
-        const adult = document.getElementById('adult').value;
-        const child = document.getElementById('child').value;
-        const town = document.getElementById('town').value;
-        const state = document.getElementById('state').value;
-        const costMin = document.getElementById('costMin').value;
-        const costMax = document.getElementById('costMax').value;
-        const currency = document.getElementById('currency').value;
-        
-        // Validasyon
-        if (!checkinBeg || !checkinEnd || !nightsFrom || !nightsTill || !adult || !town) {
-            showError('Lütfən bütün zorunlu sahələri doldurun!');
-            return;
-        }
-        
-        // Uşaq yaşlarını al
-        const ages = [];
-        const ageInputs = document.querySelectorAll('.child-age');
-        ageInputs.forEach(input => {
-            if (input.value) ages.push(input.value);
-        });
-        
-        // Form data'sını oluştur
-        const formData = {
-            region: town,
-            date: checkinBeg,  // ISO format: YYYY-MM-DD
-            nights: nightsFrom,
-            adults: adult,
-            children: child,
-            ages: ages,
-            checkin_beg: checkinBeg,
-            checkin_end: checkinEnd,
-            nights_from: nightsFrom,
-            nights_till: nightsTill,
-            state: state || undefined,
-            cost_min: costMin || undefined,
-            cost_max: costMax || undefined,
-            currency: currency,
-        };
-        
-        console.log('Form data gönderiliyor:', formData);
-        
-        // Telegram'a gönder
-        try {
-            tg.sendData(JSON.stringify(formData));
-        } catch (error) {
-            showError('Form göndərilə bilmədi: ' + error.message);
-        }
-    });
-
-    function showError(message) {
-        const errorDiv = document.getElementById('errorMessage');
-        errorDiv.textContent = message;
-        errorDiv.style.display = 'block';
-        setTimeout(() => {
-            errorDiv.style.display = 'none';
-        }, 5000);
-    }
-
-    // Initialize
-    toggleChildrenAges();
-
-    // Telegram theme'i uygula
-    if (tg.colorScheme === 'dark') {
-        document.body.style.background = '#1e1e1e';
-        document.querySelector('.container').style.background = '#2a2a2a';
-        document.querySelector('.container').style.color = '#fff';
-    }
-</script>
-
+    </script>
 </body>
 </html>
